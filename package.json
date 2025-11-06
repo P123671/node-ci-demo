@@ -1,0 +1,13 @@
+{
+  "name": "node-ci-demo",
+  "version": "1.0.0",
+  "description": "Simple Node.js CI demo for Jenkins",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js",
+    "lint": "npx eslint ."
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0"
+  }
+}
