@@ -2,28 +2,34 @@ pipeline {
     agent any
  
     tools {
-        nodejs 'Node20'  // Use the NodeJS plugin installation
+        nodejs 'Node20'
     }
  
     options {
         ansiColor('xterm')
     }
  
+    parameters {
+        string(name: 'APP_VERSION', defaultValue: '1.0.0', description: 'Enter application version')
+    }
+ 
     environment {
-        PROJECT_NAME = "Node CI Demo"
+        PROJECT_NAME = "Node Parameterized Build"
+        BUILD_ARTIFACT = "node-demo-${params.APP_VERSION}.tar.gz"
     }
  
     stages {
+ 
         stage('Checkout') {
             steps {
-                echo "\u001B[36m📦 Cloning repository...\u001B[0m"
-                git branch: 'main', url: 'https://github.com/P123671/node-ci-demo.git'
+                echo "\u001B[36m📦 Checking out code...\u001B[0m"
+                git branch: '2ndNodeJSDemo', url: 'https://github.com/P123671/node-ci-demo.git'
             }
         }
  
         stage('Install Dependencies') {
             steps {
-                echo "\u001B[34m📦 Installing npm packages...\u001B[0m"
+                echo "\u001B[34m📦 Installing dependencies...\u001B[0m"
                 sh 'npm install'
             }
         }
@@ -31,7 +37,7 @@ pipeline {
         stage('Lint Code') {
             steps {
                 echo "\u001B[33m🔍 Running ESLint...\u001B[0m"
-                sh 'npm run lint || true' // use || true to avoid pipeline failure for demo
+                sh 'npm run lint || true'
             }
         }
  
@@ -44,19 +50,19 @@ pipeline {
  
         stage('Package Artifact') {
             steps {
-                echo "\u001B[32m📦 Zipping project...\u001B[0m"
-                sh 'tar -czf build-artifact.tar.gz *'
-                archiveArtifacts artifacts: 'build-artifact.tar.gz', fingerprint: true
+                echo "\u001B[32m📦 Creating build artifact: ${env.BUILD_ARTIFACT}\u001B[0m"
+                sh "tar -czf ${env.BUILD_ARTIFACT} *"
+                archiveArtifacts artifacts: "${env.BUILD_ARTIFACT}", fingerprint: true
             }
         }
     }
  
     post {
         success {
-            echo "\u001B[32m✅ SUCCESS: Node.js pipeline completed successfully!\u001B[0m"
+            echo "\u001B[32m✅ SUCCESS: ${env.PROJECT_NAME} built version ${params.APP_VERSION}\u001B[0m"
         }
         failure {
-            echo "\u001B[31m❌ FAILURE: Check console for errors.\u001B[0m"
+            echo "\u001B[31m❌ FAILURE: Build failed for version ${params.APP_VERSION}\u001B[0m"
         }
         always {
             echo "\u001B[36m📊 Pipeline finished at ${new Date()}\u001B[0m"

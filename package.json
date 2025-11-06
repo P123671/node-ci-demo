@@ -1,7 +1,7 @@
 {
-  "name": "node-ci-demo",
+  "name": "node-param-pipeline",
   "version": "1.0.0",
-  "description": "Simple Node.js CI demo for Jenkins",
+  "description": "Node.js Jenkins parameterized build demo",
   "main": "index.js",
   "scripts": {
     "test": "node test.js",
